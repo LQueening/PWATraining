@@ -1,13 +1,13 @@
 <template>
   <div>
-    <div class="mdl-grid portfolio-max-width pb40-trans" v-masonry transition-duration="0.3s" item-selector=".item" v-show="allImgLoaded">
+    <div class="mdl-grid portfolio-max-width pb40-trans" v-masonry transition-duration="0.3s" item-selector=".item">
       <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card item" v-masonry-tile
-           v-for="(item,index) in dataList" v-if="dataList&&dataList.length">
+           v-for="(item,index) in dataList" v-if="dataList&&dataList.length" v-show="allImgLoaded" :key="item['.key']">
         <div class="mdl-card__media">
           <img class="article-image" :src="item.url" border="0" alt="cute-cat" @load="handleImgLoaded">
         </div>
         <div class="mdl-card__title" v-show="item&&item.comment">
-          <h2 class="mdl-card__title-text">{{item.comment}}--{{index}}</h2>
+          <h2 class="mdl-card__title-text">{{item.comment}}--{{item['.key']}}</h2>
         </div>
         <div class="mdl-card__supporting-text meta meta--fill">
           <div>
@@ -15,10 +15,10 @@
             <span class="mt5">2 days ago</span>
           </div>
           <div class="bar tar">
-            <mdl-button :id="`menu${item.id}`" icon class="hp100">
+            <mdl-button :id="`menu${index}`" icon class="hp100">
               <i class="material-icons">more_vert</i>
             </mdl-button>
-            <mdl-menu :for="`menu${item.id}`" class="mdl-menu mdl-menu--top-right mdl-js-menu mdl-js-ripple-effect">
+            <mdl-menu :for="`menu${index}`" class="mdl-menu mdl-menu--top-right mdl-js-menu mdl-js-ripple-effect">
               <mdl-menu-item>编辑</mdl-menu-item>
               <mdl-menu-item>收藏</mdl-menu-item>
               <mdl-menu-item>删除</mdl-menu-item>
@@ -30,7 +30,7 @@
     </div>
     <!--loading tip part-->
     <div class="wp100 tac absolute top20">
-      <div class="mdl-spinner mdl-js-spinner" :class="{'is-active':isLoading&&!allImgLoaded}"></div>
+      <div class="mdl-spinner mdl-js-spinner" :class="{'is-active':!allImgLoaded}"></div>
     </div>
     <!--footer part-->
     <!--<footer class="mdl-mini-footer">-->
@@ -56,33 +56,29 @@
       return {
         catList: [],
         dataList: [],
-        isLoading: true,
         allImgLoaded: false,
         imgLoadCount: 0,  //图片加载的计数器，当count等于图片数量时说明所有的图片都loaded
       }
     },
     watch: {
       imgLoadCount(newVal) {
-        console.log(newVal);
-        console.log(this.dataList.length);
-        let res = newVal === this.dataList.length;
-        if (res) {
-          this.imgLoadCount = 0;
+        console.log(this.imgLoadCount);
+        if (this.dataList.length === 0) {
+          this.allImgLoaded = true;
+          return;
         }
-        this.allImgLoaded = res;
+        this.allImgLoaded = newVal === this.dataList.length;
       },
       catList(newVal) {
-        let dataList = JSON.parse(JSON.stringify(newVal));
-        this.dataList = dataList;
+        this.imgLoadCount = 0;
+        this.dataList.splice(0);
+        this.dataList = JSON.parse(JSON.stringify(newVal));
       },
     },
     mounted() {
-      this.init();
+      this.catList = this.$root.calender || [];
     },
     methods: {
-      init() {
-        this.catList = this.$root.calender || [];
-      },
       toAddItem() {
         this.$router.push('addItem');
       },
