@@ -1,10 +1,13 @@
 <template>
   <div>
-    <div class="mdl-grid portfolio-max-width pb40-trans" v-masonry transition-duration="0.3s" item-selector=".item" v-show="allImgLoaded">
-      <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card item" v-masonry-tile
-           v-for="(item,index) in dataList" v-if="dataList&&dataList.length">
+    <div class="mdl-grid portfolio-max-width pb40-trans" v-masonry transition-duration="0.3s" item-selector=".item-img">
+      <div class="mdl-cell mdl-card mdl-shadow--4dp portfolio-card item-img" v-masonry-tile
+           v-for="(item,index) in getImgs()" :key="item['.key']">
         <div class="mdl-card__media">
-          <img class="article-image" :src="item.url" border="0" alt="cute-cat" @load="handleImgLoaded">
+          <img class="article-image hide" :src="item.url" border="0" alt="cute-cat" @load="handleImgLoaded(index)"
+               :class="{'show':imgLoadList[index]}">
+          <img src="http://7xr4g8.com1.z0.glb.clouddn.com/38" alt="default img" class="article-image hide"
+               :class="{'show':!imgLoadList[index]}">
         </div>
         <div class="mdl-card__title" v-show="item&&item.comment">
           <h2 class="mdl-card__title-text">{{item.comment}}--{{index}}</h2>
@@ -15,10 +18,10 @@
             <span class="mt5">2 days ago</span>
           </div>
           <div class="bar tar">
-            <mdl-button :id="`menu${item.id}`" icon class="hp100">
+            <mdl-button :id="`menu${item['.key']}`" icon class="hp100">
               <i class="material-icons">more_vert</i>
             </mdl-button>
-            <mdl-menu :for="`menu${item.id}`" class="mdl-menu mdl-menu--top-right mdl-js-menu mdl-js-ripple-effect">
+            <mdl-menu :for="`menu${item['.key']}`" class="mdl-menu mdl-menu--top-right mdl-js-menu mdl-js-ripple-effect">
               <mdl-menu-item>编辑</mdl-menu-item>
               <mdl-menu-item>收藏</mdl-menu-item>
               <mdl-menu-item>删除</mdl-menu-item>
@@ -27,10 +30,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <!--loading tip part-->
-    <div class="wp100 tac absolute top20">
-      <div class="mdl-spinner mdl-js-spinner" :class="{'is-active':isLoading&&!allImgLoaded}"></div>
     </div>
     <!--footer part-->
     <!--<footer class="mdl-mini-footer">-->
@@ -44,9 +43,9 @@
     <!--</ul>-->
     <!--</div>-->
     <!--</footer>-->
-    <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored add-item-btn" @click="toAddItem">
-      <i class="material-icons">add</i>
-    </button>
+    <!--<button class="mdl-button mdl-js-button mdl-button&#45;&#45;fab mdl-js-ripple-effect mdl-button&#45;&#45;colored add-item-btn" @click="toAddItem">-->
+    <!--<i class="material-icons">add</i>-->
+    <!--</button>-->
     <mdl-snackbar display-on="failLoadSnackbar"></mdl-snackbar>
   </div>
 </template>
@@ -55,39 +54,35 @@
     data() {
       return {
         catList: [],
-        dataList: [],
-        isLoading: true,
-        allImgLoaded: false,
-        imgLoadCount: 0,  //图片加载的计数器，当count等于图片数量时说明所有的图片都loaded
+        imgLoadList: [],
       }
     },
-    watch: {
-      imgLoadCount(newVal) {
-        console.log(newVal);
-        console.log(this.dataList.length);
-        let res = newVal === this.dataList.length;
-        if (res) {
-          this.imgLoadCount = 0;
-        }
-        this.allImgLoaded = res;
-      },
-      catList(newVal) {
-        let dataList = JSON.parse(JSON.stringify(newVal));
-        this.dataList = dataList;
-      },
-    },
-    mounted() {
-      this.init();
-    },
     methods: {
-      init() {
-        this.catList = this.$root.calender || [];
+      getImgs() {
+        if (navigator.onLine) {
+          this.saveImgsToCache();
+          return this.$root.calender || [];
+        } else {
+          return JSON.parse(localStorage.getItem('imgs'));
+        }
+      },
+      saveImgsToCache() {
+        this.$root.$firebaseRefs.calender.orderByChild('created_at').once('value', (calender) => {
+          let cachedCalenders = [];
+          calender.forEach((calenderObj) => {
+            let cachedCalender = calenderObj.val();
+            cachedCalender['.key'] = calenderObj.key;
+            cachedCalenders.push(cachedCalender)
+          });
+          localStorage.setItem('imgs', JSON.stringify(cachedCalenders))
+        })
       },
       toAddItem() {
+        this.$bus.$emit('currentPage', 'addItem');
         this.$router.push('addItem');
       },
-      handleImgLoaded() {
-        this.imgLoadCount++;
+      handleImgLoaded(index) {
+        this.imgLoadList.splice(index, 0, 1);
       },
     },
   }

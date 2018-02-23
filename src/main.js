@@ -9,6 +9,15 @@ import Vuefire from 'vuefire'
 import firebase from './service/firebase'
 import fly from 'flyio'
 
+/*将Event Bus绑定到实例中*/
+const EventBus = new Vue();
+Object.defineProperties(Vue.prototype, {
+  $bus: {
+    get: function () {
+      return EventBus;
+    }
+  }
+});
 
 Vue.use(VueMdl);
 Vue.use(VueMasonryPlugin);

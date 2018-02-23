@@ -10,6 +10,15 @@
   display: inline-block;
 }
 
+/*display style*/
+.hide {
+  display: none;
+}
+
+.show {
+  display: block;
+}
+
 /*padding style*/
 .pb40 {
   padding-bottom: 40px;

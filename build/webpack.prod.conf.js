@@ -106,9 +106,30 @@ const webpackConfig = merge(baseWebpackConfig, {
     new SWPrecacheWebpackPlugin({
       cacheId: 'calender',
       filename: 'service-worker.js',
-      staticFileGlobs: ['dist/**/*.{js,html,css}'],
+      staticFileGlobs: ['dist/**/*.{js,html,css,jpg}'],
       minify: true,
-      stripPrefix: 'dist/'
+      stripPrefix: 'dist/',
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/fonts\.googleapis\.com\//,
+          handler: 'cacheFirst'
+        },
+        {
+          urlPattern: /^https:\/\/fonts\.gstatic\.com\//,
+          handler: 'cacheFirst'
+        },
+        {
+          urlPattern: /^https:\/\/code\.getmdl\.io\//,
+          handler: 'cacheFirst'
+        },
+        {
+          urlPattern: /^https:\/\/cdn\.bootcss\.com\//,
+          handler: 'cacheFirst'
+        },
+        {
+          urlPattern: /^http:\/\/7xr4g8\.com1\.z0\.glb\.clouddn\.com\/*/,
+          handler: 'cacheFirst'
+        }]
     })
   ]
 })

@@ -43,24 +43,20 @@
     },
     methods: {
       getData() {
-        this.fly.get('https://thecatapi.com/api/images/get?format=xml&results_per_page=1').then(res => {
-          let data = res.data || '';
-          this.uploadImgUrl = parse(data).root.children['0'].children['0'].children['0'].children['0'].content ||
-            'https://thecatapi.com/api/images/get.php?id=9lq';
-        })
+        let num = this.getRandomNum(1, 840);
+        this.uploadImgUrl = `http://7xr4g8.com1.z0.glb.clouddn.com/${num}`;
       },
       postCat() {
-        console.log(this.uploadImgUrl);
-        console.log(this.content);
-        console.log(this);
-        console.log(this.$root);
         this.$root.$firebaseRefs.calender.push({
           'url': this.uploadImgUrl,
           'comment': this.content,
           'info': 'Posted by baba on Friday',
           'created_at': -1 * new Date().getTime()
         }).then(res => {
-          console.log(res);
+          this.$bus.$emit('currentPage', 'index');
+          this.$router.push('index');
+        }, fail => {
+          console.log('fail');
         });
       },
       handleImgLoad() {
@@ -70,6 +66,10 @@
         this.uploadImgUrl = '';
         this.imgLoaded = false;
         this.getData();
+      },
+      getRandomNum(start, end) {
+        let gap = end - start + 1;
+        return Math.floor(Math.random() * gap + start);
       },
     },
   }

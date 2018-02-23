@@ -44,10 +44,14 @@
     },
     mounted() {
       this.currentActiveName = this.$route.name || '';
+      this.$bus.$on('currentPage', ($event) => {
+        this.currentActiveName = $event;
+        console.log($event);
+      });
     },
     methods: {
       toPage(pageName) {
-        this.currentActiveName = pageName;
+        this.$bus.$emit('currentPage', pageName);
         this.$router.push(pageName);
       },
       getActiveStatus(name) {

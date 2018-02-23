@@ -41,7 +41,7 @@
 .portfolio-logo {
   height: 50px;
   width: 50px;
-  margin-top: 7px;
+  margin-top: 8px;
 }
 
 .portfolio-navigation-row {
@@ -171,4 +171,8 @@ img.article-image {
 footer {
   background-image: url(../footer-background.png);
   background-size: cover;
+}
+
+.mdl-spinner:not(.is-upgraded).is-active:after {
+  content: "" !important;
 }
