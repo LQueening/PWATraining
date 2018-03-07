@@ -11,8 +11,9 @@
           <a class="mdl-navigation__link" href="javascript:void(0)" @click="toPage('index')"
              :class="{'is-active':getActiveStatus('index')}">TIMELINE</a>
           <a class="mdl-navigation__link" href="javascript:void(0)" @click="toPage('addItem')"
-             :class="{'is-active':getActiveStatus('addItem')}">ADD
-            CAT</a>
+             :class="{'is-active':getActiveStatus('addItem')}">ADD CAT</a>
+          <a class="mdl-navigation__link" href="javascript:void(0)" @click="toPage('takePhoto')"
+             :class="{'is-active':getActiveStatus('takePhoto')}">TAKE PHOTO</a>
         </nav>
       </div>
     </header>
@@ -22,6 +23,8 @@
            :class="{'is-active':getActiveStatus('index')}">TIMELINE</a>
         <a class="mdl-navigation__link" href="javascript:void(0)" @click="toPage('addItem')"
            :class="{'is-active':getActiveStatus('addItem')}">ADD CAT</a>
+        <a class="mdl-navigation__link" href="javascript:void(0)" @click="toPage('takePhoto')"
+           :class="{'is-active':getActiveStatus('takePhoto')}">TAKE PHOTO</a>
       </nav>
     </div>
     <main class="mdl-layout__content">
@@ -39,14 +42,17 @@
     name: 'app',
     data() {
       return {
+        debugCount: 0, //屏幕点击次数
         currentActiveName: 'index',
       }
+    },
+    created() {
+      this.insertVconsole();
     },
     mounted() {
       this.currentActiveName = this.$route.name || '';
       this.$bus.$on('currentPage', ($event) => {
         this.currentActiveName = $event;
-        console.log($event);
       });
     },
     methods: {
@@ -56,6 +62,14 @@
       },
       getActiveStatus(name) {
         return name === this.currentActiveName;
+      },
+      insertVconsole() {
+        let d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
+        g.type = 'text/javascript';
+        g.async = true;
+        g.defer = true;
+        g.src = 'https://s.url.cn/qqun/qun/qqweb/m/qun/confession/js/vconsole.min.js';
+        s.parentNode.insertBefore(g, s);
       },
     },
   }

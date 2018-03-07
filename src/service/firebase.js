@@ -11,5 +11,6 @@ let config = {
 firebase.initializeApp(config);
 
 export default {
-  database: firebase.database()
+  database: firebase.database(),
+  storage: firebase.storage()
 }

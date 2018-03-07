@@ -29,8 +29,10 @@
 </template>
 <script>
   import parse from 'xml-parser'
+  import postCat from '../mixins/postCat'
 
   export default {
+    mixins: [postCat],
     data() {
       return {
         uploadImgUrl: '',  //上传的图片地址
@@ -45,19 +47,6 @@
       getData() {
         let num = this.getRandomNum(1, 840);
         this.uploadImgUrl = `http://7xr4g8.com1.z0.glb.clouddn.com/${num}`;
-      },
-      postCat() {
-        this.$root.$firebaseRefs.calender.push({
-          'url': this.uploadImgUrl,
-          'comment': this.content,
-          'info': 'Posted by baba on Friday',
-          'created_at': -1 * new Date().getTime()
-        }).then(res => {
-          this.$bus.$emit('currentPage', 'index');
-          this.$router.push('index');
-        }, fail => {
-          console.log('fail');
-        });
       },
       handleImgLoad() {
         this.imgLoaded = true;
