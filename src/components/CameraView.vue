@@ -10,7 +10,7 @@
 </template>
 <script>
   import {storage} from '../service/firebase'
-  import postCat from '../mixins/postCat'
+  import {postCat} from '../mixins/postCat'
 
   export default {
     mixins: [postCat],

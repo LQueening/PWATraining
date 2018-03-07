@@ -12,7 +12,7 @@
              :class="{'is-active':getActiveStatus('index')}">TIMELINE</a>
           <a class="mdl-navigation__link" href="javascript:void(0)" @click="toPage('addItem')"
              :class="{'is-active':getActiveStatus('addItem')}">ADD CAT</a>
-          <a class="mdl-navigation__link" href="javascript:void(0)" @click="toPage('takePhoto')"
+          <a class="mdl-navigation__link" href="javascript:void(0)" @click="toPage('takePhoto')" v-if="hasCameraHardware"
              :class="{'is-active':getActiveStatus('takePhoto')}">TAKE PHOTO</a>
         </nav>
       </div>
@@ -23,7 +23,7 @@
            :class="{'is-active':getActiveStatus('index')}">TIMELINE</a>
         <a class="mdl-navigation__link" href="javascript:void(0)" @click="toPage('addItem')"
            :class="{'is-active':getActiveStatus('addItem')}">ADD CAT</a>
-        <a class="mdl-navigation__link" href="javascript:void(0)" @click="toPage('takePhoto')"
+        <a class="mdl-navigation__link" href="javascript:void(0)" @click="toPage('takePhoto')" v-if="hasCameraHardware"
            :class="{'is-active':getActiveStatus('takePhoto')}">TAKE PHOTO</a>
       </nav>
     </div>
@@ -44,9 +44,11 @@
       return {
         debugCount: 0, //屏幕点击次数
         currentActiveName: 'index',
+        hasCameraHardware: false,//是否有照相机，如果没有的话隐藏TAKE PHOTO的tab
       }
     },
     created() {
+      this.checkHasCamera();
       this.insertVconsole();
     },
     mounted() {
@@ -56,6 +58,11 @@
       });
     },
     methods: {
+      checkHasCamera() {
+        navigator.mediaDevices.getUserMedia({video: true}).then(res => {
+          this.hasCameraHardware = true;
+        });
+      },
       toPage(pageName) {
         this.$bus.$emit('currentPage', pageName);
         this.$router.push(pageName);

@@ -29,7 +29,7 @@
 </template>
 <script>
   import parse from 'xml-parser'
-  import postCat from '../mixins/postCat'
+  import {postCat} from '../mixins/postCat'
 
   export default {
     mixins: [postCat],
